@@ -244,10 +244,10 @@
     <!-- LAYAR 1: START -->
     <section id="screen-start" class="screen">
         <div class="interaction-card">
-            <h1 class="font-serif text-5xl mb-4 italic text-accent" id="welcome-msg">Woi sayang...</h1>
-            <p class="text-slate-300 mb-8 font-light">Lagi capek banget ya? Dunia emang suka ga adil kadang. Sini, aku temenin bentar biar ga sesek banget. Siap?</p>
+            <h1 class="font-serif text-5xl mb-4 italic text-accent" id="welcome-msg">Woi sayangg...</h1>
+            <p class="text-slate-300 mb-8 font-light">Lagi cape banget ya? Dunia emang suka ga adil kadang. Sini, aku temenin bentar biar ga sesek banget. Siap?</p>
             <button onclick="nextScreen('screen-mood')" class="btn-interact">
-                Ayok, butuh banget <i class="fa-solid fa-face-smile-beam ml-2"></i>
+                ayo, butuh banget <i class="fa-solid fa-face-smile-beam ml-2"></i>
             </button>
         </div>
     </section>
@@ -259,19 +259,19 @@
             <div class="flex flex-col">
                 <button onclick="recordMood('nangis', 'screen-comfort')" class="choice-btn">
                     <span class="text-2xl">😢</span>
-                    <span>Hati lagi ga karuan, pengen nangis</span>
+                    <span>pengen menangis</span>
                 </button>
                 <button onclick="recordMood('berisik', 'screen-comfort')" class="choice-btn">
                     <span class="text-2xl">😵‍💫</span>
-                    <span>Overthink parah, otak ga bisa diem</span>
+                    <span>kepala nya berisik baby</span>
                 </button>
                 <button onclick="recordMood('dipeluk', 'screen-comfort')" class="choice-btn">
                     <span class="text-2xl">🧸</span>
-                    <span>Ga butuh apa-apa, pengen dimanja aja</span>
+                    <span>pengen dimanja aja</span>
                 </button>
                 <button onclick="recordMood('bingung', 'screen-comfort')" class="choice-btn">
                     <span class="text-2xl">🫠</span>
-                    <span>Ga tau, hampa aja rasanya</span>
+                    <span>gatau baby</span>
                 </button>
             </div>
             <p class="mt-6 text-[10px] text-slate-500 italic">Klik aja yang paling pas di hati...</p>
@@ -326,7 +326,7 @@
                 </li>
                 <li class="flex items-start gap-3">
                     <i class="fa-solid fa-check-circle text-accent mt-1"></i>
-                    <span>Mau dunia seberisik apa pun, pelukanku bakal selalu jadi tempat paling tenang buat kamu.</span>
+                    <span>Mau dunia seberisik apa pun, aku pastiin pelukan aku bakal selalu jadi tempat paling tenang buat kamu.</span>
                 </li>
                 <li class="flex items-start gap-3">
                     <i class="fa-solid fa-check-circle text-accent mt-1"></i>
@@ -345,9 +345,9 @@
             <div class="heart-beat mb-6 text-6xl">
                 <i class="fa-solid fa-heart"></i>
             </div>
-            <h2 class="font-serif text-6xl md:text-8xl text-white mb-8 italic" id="final-title">Love you poll.</h2>
+            <h2 class="font-serif text-6xl md:text-8xl text-white mb-8 italic" id="final-title">wopyuuu babyy.</h2>
             <p class="text-slate-300 mb-12 italic leading-relaxed max-w-lg mx-auto text-lg" id="final-quote">
-                Mimpi indah ya kesayangan.
+                mimpi indah ya sayangku.
             </p>
             <div class="flex items-center justify-center gap-4 mb-10">
                 <div class="text-right">
@@ -376,8 +376,8 @@
         const quotes = [
             "Tidur yang nyenyak ya. Jangan mikirin yang ga penting. Besok kita hadapin bareng lagi.",
             "Makasih udah bertahan hari ini. Dunia beruntung punya kamu, dan aku jauh lebih beruntung.",
-            "Jangan sedih kelamaan ya. Kamu cantik/ganteng banget pas senyum, ga bohong.",
-            "Ingat, kamu ga sendirian. Ada aku yang selalu siap sedia dengerin semua ocehan kamu.",
+            "Jangan sedih kelamaan ya. Kamu cantik kalo senyum, ga boong.",
+            "Inget, kamu ga sendirian. Ada aku yang selalu siap sedia dengerin semua ocehan kamu.",
             "Besok pasti lebih baik. Kalau ga lebih baik pun, ya udah gapapa, kan ada aku."
         ];
 
@@ -386,7 +386,7 @@
             const role = document.getElementById('user-role').value;
             const error = document.getElementById('error-msg');
 
-            const validRoles = ['pacar', 'kekasih', 'calon', 'masa depan', 'ayang', 'istri', 'suami', 'pasangan'];
+            const validRoles = ['pacar', 'kekasih', 'calon', 'masa depan', 'ayang', 'suami', 'pasangan'];
             const isRoleValid = validRoles.some(r => role.trim().toLowerCase().includes(r));
 
             if (name.trim().length > 1 && isRoleValid) {
