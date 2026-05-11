@@ -209,6 +209,14 @@
         .text-accent {
             color: var(--vibrant-pink);
         }
+        
+        .animate-spin-slow {
+            animation: spin 8s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -257,19 +265,19 @@
         <div class="interaction-card">
             <h2 class="text-xl font-semibold mb-6">Lagi ngerasain apa sih?</h2>
             <div class="flex flex-col">
-                <button onclick="recordMood('nangis', 'screen-comfort')" class="choice-btn">
+                <button onclick="recordMood('nangis')" class="choice-btn">
                     <span class="text-2xl">😢</span>
                     <span>pengen menangis</span>
                 </button>
-                <button onclick="recordMood('berisik', 'screen-comfort')" class="choice-btn">
+                <button onclick="recordMood('berisik')" class="choice-btn">
                     <span class="text-2xl">😵‍💫</span>
                     <span>kepala nya berisik baby</span>
                 </button>
-                <button onclick="recordMood('dipeluk', 'screen-comfort')" class="choice-btn">
+                <button onclick="recordMood('dipeluk')" class="choice-btn">
                     <span class="text-2xl">🧸</span>
                     <span>pengen dimanja aja</span>
                 </button>
-                <button onclick="recordMood('bingung', 'screen-comfort')" class="choice-btn">
+                <button onclick="recordMood('bingung')" class="choice-btn">
                     <span class="text-2xl">🫠</span>
                     <span>gatau baby</span>
                 </button>
@@ -282,9 +290,9 @@
     <section id="screen-comfort" class="screen">
         <div class="interaction-card">
             <div id="mood-response" class="mb-6 italic text-accent font-medium text-lg"></div>
-            <h2 class="font-serif text-3xl mb-4 italic">Break dulu bentar...</h2>
-            <p class="text-slate-300 mb-6 text-sm leading-relaxed">
-                Gapapa kok kalau hari ini ga sesuai ekspektasi. Kamu udah lakuin yang terbaik, dan itu udah lebih dari cukup. Aku bangga banget sama kamu.
+            <h2 id="comfort-title" class="font-serif text-3xl mb-4 italic">Break dulu bentar...</h2>
+            <p id="comfort-desc" class="text-slate-300 mb-6 text-sm leading-relaxed">
+                ...
             </p>
             <div class="space-y-4">
                 <div class="text-xs uppercase tracking-widest text-slate-500">Tekan terus buat transfer energi dari aku</div>
@@ -296,7 +304,7 @@
                     ontouchend="stopCharge()" 
                     class="w-20 h-20 mx-auto rounded-full bg-red-600/10 border-2 border-[#FF0B55] flex items-center justify-center text-2xl hover:bg-red-600/20 transition-colors focus:outline-none shadow-[0_0_20px_rgba(255,11,85,0.3)]"
                 >
-                    <i class="fa-solid fa-heart-pulse text-accent"></i>
+                    <i id="charge-icon" class="fa-solid fa-heart-pulse text-accent"></i>
                 </button>
                 <div class="progress-bar">
                     <div id="charge-fill" class="progress-fill"></div>
@@ -314,24 +322,9 @@
     <!-- LAYAR 4: JANJI -->
     <section id="screen-promise" class="screen">
         <div class="interaction-card">
-            <h2 class="font-serif text-3xl mb-6 italic text-accent">Dengerin ya...</h2>
-            <ul class="text-left space-y-4 text-sm text-slate-300">
-                <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-check-circle text-accent mt-1"></i>
-                    <span>Aku ga bakal ninggalin kamu sendirian, apalagi pas kamu lagi ngerasa ga berdaya.</span>
-                </li>
-                <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-check-circle text-accent mt-1"></i>
-                    <span>Cerita aja semuanya, ga usah takut dihakimi. Aku cuma mau dengerin suara kamu.</span>
-                </li>
-                <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-check-circle text-accent mt-1"></i>
-                    <span>Mau dunia seberisik apa pun, aku pastiin pelukan aku bakal selalu jadi tempat paling tenang buat kamu.</span>
-                </li>
-                <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-check-circle text-accent mt-1"></i>
-                    <span>Makasih ya udah kuat. Kamu ga perlu sempurna terus buat aku sayang sama kamu.</span>
-                </li>
+            <h2 id="promise-title" class="font-serif text-3xl mb-6 italic text-accent">Dengerin ya...</h2>
+            <ul id="promise-list" class="text-left space-y-4 text-sm text-slate-300">
+                <!-- List janji akan diisi dinamis lewat JS -->
             </ul>
             <button onclick="nextScreen('screen-final')" class="btn-interact mt-8 w-full group">
                 Janji Ya? <i class="fa-solid fa-handshake ml-2 group-hover:rotate-12 transition-transform"></i>
@@ -351,8 +344,8 @@
             </p>
             <div class="flex items-center justify-center gap-4 mb-10">
                 <div class="text-right">
-                    <p class="text-[10px] uppercase tracking-[0.3em] text-slate-500">Yang bakal selalu jagain,</p>
-                    <p class="font-serif text-3xl text-accent">vk</p>
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-slate-500">Yang bakal selalu sayang kamu,</p>
+                    <p class="font-serif text-3xl text-accent">VKS</p>
                 </div>
                 <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center">
                     <i class="fa-solid fa-star text-[#FFDEDE] animate-spin-slow"></i>
@@ -373,6 +366,7 @@
 
     <script>
         let userNameInput = "";
+        let currentMood = "";
         const quotes = [
             "Tidur yang nyenyak ya. Jangan mikirin yang ga penting. Besok kita hadapin bareng lagi.",
             "Makasih udah bertahan hari ini. Dunia beruntung punya kamu, dan aku jauh lebih beruntung.",
@@ -380,6 +374,57 @@
             "Inget, kamu ga sendirian. Ada aku yang selalu siap sedia dengerin semua ocehan kamu.",
             "Besok pasti lebih baik. Kalau ga lebih baik pun, ya udah gapapa, kan ada aku."
         ];
+
+        const moodContent = {
+            'nangis': {
+                response: "I feel you, baby...",
+                title: "Nangis aja, gpp",
+                desc: "Keluarin semua sedihnya. Kamu ga perlu pura-pura kuat di depan aku. Aku bakal nemenin kamu sampe perasaanmu lega. Nangis bukan berarti lemah kok.",
+                icon: "fa-face-sad-tear",
+                promises: [
+                    "Aku bakal jadi pundak pertama yang kamu cari pas kamu sedih.",
+                    "Ga ada kata 'lebay' buat perasaan kamu, aku hargai semuanya.",
+                    "Aku bakal usahain buat selalu ada biar kamu ga ngerasa sendirian lagi.",
+                    "Satu dunia boleh jahat, tapi aku bakal tetep sayang sama kamu."
+                ]
+            },
+            'berisik': {
+                response: "Shhh... tenang babyy.",
+                title: "Tenangin pikirannya",
+                desc: "Isi kepalanya lagi rame banget ya? Tarik napas pelan-pelan. Fokus ke detak jantung ini aja, biar berisiknya ilang satu-satu. Aku di sini.",
+                icon: "fa-brain",
+                promises: [
+                    "Aku bakal jadi tempat paling tenang pas dunia di luar sana berisik.",
+                    "Kalau kamu bingung cerita, aku bakal diem nemenin kamu sampe tenang.",
+                    "Aku janji bakal dengerin setiap keluh kesahmu tanpa menghakimi.",
+                    "Pikiran jahat di kepalamu itu bohong, yang bener cuma sayangku ke kamu."
+                ]
+            },
+            'dipeluk': {
+                response: "Come here, baby...",
+                title: "Peluk jauh dulu ya",
+                desc: "Sini senderan. Kamu udah hebat banget hari ini. Sekarang waktunya manja-manjaan sebentar biar capeknya ilang. Bayangin aku lagi di sampingmu.",
+                icon: "fa-heart",
+                promises: [
+                    "Aku janji bakal selalu kasih pelukan paling anget pas kamu capek.",
+                    "Manja aja terus ke aku, aku malah seneng kalau kamu nempel terus.",
+                    "Aku bakal selalu jagain perasaan kamu biar ga luka lagi.",
+                    "Makasih ya udah kuat, sini aku kasih kasih sayang yang banyak."
+                ]
+            },
+            'bingung': {
+                response: "It's okay to not know.",
+                title: "Istirahat dulu yuk",
+                desc: "Gatau mau rasa apa? Gapapa. Kadang kita cuma butuh diem tanpa harus ngerti apa-apa. Sini, recharge energi dulu sama aku sebentar.",
+                icon: "fa-cloud",
+                promises: [
+                    "Apapun yang kamu rasain, aku bakal tetep dampingin kamu.",
+                    "Jangan dipaksa buat ngerti, pelan-pelan aja bareng aku.",
+                    "Aku janji bakal sabar nemenin kamu nyari arah yang bener.",
+                    "Kamu ga harus sempurna kok, bingung pun aku tetep sayang."
+                ]
+            }
+        };
 
         function checkAuth() {
             const name = document.getElementById('user-name').value;
@@ -416,6 +461,10 @@
                 if(fill) fill.style.width = '0%';
             }
 
+            if (screenId === 'screen-promise') {
+                updatePromiseList();
+            }
+
             if (screenId === 'screen-final') {
                 const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
                 document.getElementById('final-quote').innerText = randomQuote;
@@ -425,15 +474,33 @@
             document.getElementById(screenId).classList.add('active');
         }
 
-        function recordMood(mood, nextId) {
-            const response = document.getElementById('mood-response');
-            switch(mood) {
-                case 'nangis': response.innerText = `Nangis aja ${userNameInput}, ga usah ditahan. Aku di sini kok nemenin. 🫂`; break;
-                case 'berisik': response.innerText = "Otaknya lagi rewel ya? Sini aku bantu jinakin pelan-pelan. 🧘‍♀️"; break;
-                case 'dipeluk': response.innerText = "Virtual hug dulu ya? Bayangin aku lagi meluk kamu kenceng banget. 🫂✨"; break;
-                default: response.innerText = `Ga paham ya rasanya gimana? Gapapa, kita diem-dieman aja dulu sambil senderan. 🌙`;
-            }
-            nextScreen(nextId);
+        function recordMood(mood) {
+            currentMood = mood;
+            const data = moodContent[mood] || moodContent['bingung'];
+            
+            document.getElementById('mood-response').innerText = data.response;
+            document.getElementById('comfort-title').innerText = data.title;
+            document.getElementById('comfort-desc').innerText = data.desc;
+            document.getElementById('charge-icon').className = `fa-solid ${data.icon} text-accent`;
+            
+            nextScreen('screen-comfort');
+        }
+
+        function updatePromiseList() {
+            const listContainer = document.getElementById('promise-list');
+            const data = moodContent[currentMood] || moodContent['bingung'];
+            
+            listContainer.innerHTML = ""; // Bersihkan list lama
+            
+            data.promises.forEach(promise => {
+                const li = document.createElement('li');
+                li.className = "flex items-start gap-3";
+                li.innerHTML = `
+                    <i class="fa-solid fa-check-circle text-accent mt-1"></i>
+                    <span>${promise}</span>
+                `;
+                listContainer.appendChild(li);
+            });
         }
 
         let chargeInterval;
