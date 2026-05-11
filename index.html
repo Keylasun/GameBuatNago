@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey for You</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Ikon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy-deep: #020617;
+            --navy-soft: #0f172a;
+            --purple-accent: #7c3aed;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--navy-deep);
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            user-select: none; /* Mencegah seleksi teks agar terasa seperti app/game */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Latar belakang bintang bergerak */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
+        }
+
+        /* Navigasi layar */
+        .screen {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Kartu Interaksi */
+        .interaction-card {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Tombol Utama */
+        .btn-interact {
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.4);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-interact:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px -5px rgba(124, 58, 237, 0.6);
+        }
+
+        .btn-interact:active {
+            transform: scale(0.95);
+        }
+
+        /* Progres Bar untuk Charging */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--purple-accent);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Tombol Pilihan Mood */
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin: 0.5rem 0;
+            width: 100%;
+            transition: all 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #f8fafc;
+            cursor: pointer;
+        }
+
+        .choice-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--purple-accent);
+        }
+
+        /* Animasi Partikel */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        @keyframes floatParticle {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100vh); }
+        }
+
+        .heart-beat {
+            animation: beat 2s infinite;
+        }
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Latar Belakang Statis -->
+    <div class="stars"></div>
+    <div id="particles-container"></div>
+
+    <!-- LAYAR 1: START -->
+    <section id="screen-start" class="screen active">
+        <div class="interaction-card">
+            <h1 class="font-serif text-5xl mb-4 italic">Hai sayang...</h1>
+            <p class="text-slate-400 mb-8 font-light">Lagi ngerasa capek banget ya hari ini? Aku punya sesuatu kecil buat bantu kamu 'nafas' bentar. Mau mulai?</p>
+            <button onclick="nextScreen('screen-mood')" class="btn-interact">
+                Mulai Journey <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- LAYAR 2: PILIH MOOD -->
+    <section id="screen-mood" class="screen">
+        <div class="interaction-card">
+            <h2 class="text-xl font-semibold mb-6">Gimana perasaan kamu sekarang?</h2>
+            <div class="flex flex-col">
+                <button onclick="recordMood('Capek banget, pen nangis', 'screen-comfort')" class="choice-btn">
+                    <span class="text-2xl">🥺</span>
+                    <span>Capek banget, pengen nangis</span>
+                </button>
+                <button onclick="recordMood('Isi kepala berisik parah', 'screen-comfort')" class="choice-btn">
+                    <span class="text-2xl">🤯</span>
+                    <span>Isi kepala berisik parah</span>
+                </button>
+                <button onclick="recordMood('Cuma pengen dipeluk', 'screen-comfort')" class="choice-btn">
+                    <span class="text-2xl">🫂</span>
+                    <span>Cuma pengen dipeluk</span>
+                </button>
+                <button onclick="recordMood('Gak tau, campur aduk', 'screen-comfort')" class="choice-btn">
+                    <span class="text-2xl">😶‍🌫️</span>
+                    <span>Gak tau, campur aduk</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LAYAR 3: COMFORT & CHARGING -->
+    <section id="screen-comfort" class="screen">
+        <div class="interaction-card">
+            <div id="mood-response" class="mb-6 italic text-purple-300 font-medium"></div>
+            <h2 class="font-serif text-3xl mb-4">Sini, aku dengerin...</h2>
+            <p class="text-slate-400 mb-6 text-sm leading-relaxed">
+                Gak papa kalau hari ini berantakan. Makasih ya udah kuat banget sampai detik ini. Apapun yang kamu rasain, aku bakal terus ada di sini buat dengerin dan nemenin kamu.
+            </p>
+            <div class="space-y-4">
+                <div class="text-xs uppercase tracking-widest text-slate-500">Hold button to recharge energy</div>
+                <!-- Tombol Interaktif (Tekan & Tahan) -->
+                <button 
+                    onmousedown="startCharge()" 
+                    onmouseup="stopCharge()" 
+                    onmouseleave="stopCharge()"
+                    ontouchstart="startCharge()" 
+                    ontouchend="stopCharge()" 
+                    class="w-20 h-20 mx-auto rounded-full bg-purple-600/20 border-2 border-purple-500 flex items-center justify-center text-2xl hover:bg-purple-600/40 transition-colors focus:outline-none"
+                >
+                    <i class="fa-solid fa-bolt text-purple-400"></i>
+                </button>
+                <div class="progress-bar">
+                    <div id="charge-fill" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LAYAR 4: JANJI -->
+    <section id="screen-promise" class="screen">
+        <div class="interaction-card">
+            <h2 class="font-serif text-3xl mb-6">Janji Aku Ke Kamu:</h2>
+            <ul class="text-left space-y-4 text-sm text-slate-300">
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-purple-500 mt-1"></i>
+                    <span>Aku bakal selalu nemenin kamu di titik terendah sekalipun.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-purple-500 mt-1"></i>
+                    <span>Aku bakal dengerin semua keluhan kamu tanpa nge-judge.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-purple-500 mt-1"></i>
+                    <span>Aku bakal selalu usaha kasih yang terbaik buat kebahagiaan kamu.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-purple-500 mt-1"></i>
+                    <span>Makasih udah nerima aku & mau berproses bareng-bareng.</span>
+                </li>
+            </ul>
+            <button onclick="nextScreen('screen-final')" class="btn-interact mt-8 w-full">
+                Satu Hal Lagi...
+            </button>
+        </div>
+    </section>
+
+    <!-- LAYAR 5: FINAL -->
+    <section id="screen-final" class="screen">
+        <div class="max-w-2xl">
+            <div class="heart-beat mb-6 text-5xl text-red-500/80">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <h2 class="font-serif text-6xl md:text-8xl text-white mb-8 italic">I love you, <span class="text-purple-400 italic">always.</span></h2>
+            <p class="text-slate-400 mb-12 italic leading-relaxed px-4">
+                Tidur yang nyenyak ya sayang. Jangan biarin beban hari ini ngerusak mimpi kamu. Kamu hebat, kamu kuat, dan kamu gak sendirian.
+            </p>
+            <div class="flex items-center justify-center gap-4">
+                <div class="text-right">
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-slate-500">Selalu sayang kamu,</p>
+                    <p class="font-serif text-3xl text-purple-300">vk</p>
+                </div>
+                <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center">
+                    <i class="fa-solid fa-heart text-red-400"></i>
+                </div>
+            </div>
+            <button onclick="restart()" class="mt-16 text-xs text-slate-600 uppercase tracking-widest hover:text-slate-400 transition-all border-b border-transparent hover:border-slate-400 pb-1">
+                <i class="fa-solid fa-rotate-left mr-2"></i> Mulai Dari Awal
+            </button>
+        </div>
+    </section>
+
+    <!-- LOGIKA JAVASCRIPT -->
+    <script>
+        // Navigasi antar layar
+        function nextScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Respon berdasarkan Mood yang dipilih
+        function recordMood(moodText, nextId) {
+            const response = document.getElementById('mood-response');
+            if (moodText.includes('nangis')) {
+                response.innerText = "Nangis aja sayang, gapapa... aku peluk virtual ya? 🫂";
+            } else if (moodText.includes('berisik')) {
+                response.innerText = "Ssttt... tarik nafas pelan-pelan. Fokus ke aku aja ya. 🧘‍♀️";
+            } else if (moodText.includes('dipeluk')) {
+                response.innerText = "Andai aku di sana, aku gak bakal lepasin pelukannya. 🫂❤️";
+            } else {
+                response.innerText = "Gak papa kalau bingung. Aku temenin duduk diem di sini ya. ✨";
+            }
+            nextScreen(nextId);
+        }
+
+        // Logika Charging (Tekan & Tahan)
+        let chargeInterval;
+        let progress = 0;
+
+        function startCharge() {
+            // Jika sudah 100, jangan mulai lagi
+            if (progress >= 100) return;
+
+            chargeInterval = setInterval(() => {
+                if (progress < 100) {
+                    progress += 1.5; // Kecepatan mengisi
+                    document.getElementById('charge-fill').style.width = progress + '%';
+                } else {
+                    clearInterval(chargeInterval);
+                    // Pindah layar otomatis setelah penuh
+                    setTimeout(() => {
+                        nextScreen('screen-promise');
+                    }, 500);
+                }
+            }, 30);
+        }
+
+        function stopCharge() {
+            clearInterval(chargeInterval);
+            // Mengurangi progres pelan-pelan jika dilepas sebelum penuh (opsional)
+            const drain = setInterval(() => {
+                if (progress > 0 && progress < 100) {
+                    progress -= 0.5;
+                    document.getElementById('charge-fill').style.width = progress + '%';
+                } else {
+                    clearInterval(drain);
+                }
+            }, 50);
+        }
+
+        // Reset game ke awal
+        function restart() {
+            progress = 0;
+            document.getElementById('charge-fill').style.width = '0%';
+            nextScreen('screen-start');
+        }
+
+        // Membuat efek partikel bintang yang melayang
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 3;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.top = Math.random() * 100 + 'vh';
+                p.style.animation = `floatParticle ${Math.random() * 10 + 15}s linear infinite`;
+                p.style.animationDelay = `-${Math.random() * 20}s`;
+                container.appendChild(p);
+            }
+        }
+
+        // Jalankan partikel saat load
+        createParticles();
+
+        // Mencegah klik kanan agar terasa lebih seperti aplikasi
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+</html>
